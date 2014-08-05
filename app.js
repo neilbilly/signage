@@ -23,15 +23,20 @@ function emitContent(file) {
   });
 }
 
-new cronJob('0 * * * * *', function(){
+var items = [];
+items.push({path:'/public/current/item_1.html',schedule:'0 * * * * *'});
+items.push({path:'/public/current/item_2.html',schedule:'30 * * * * *'});
 
-  emitContent('/public/current/item_1.html')
-}, null, true, null);
 
-new cronJob('30 * * * * *', function(){
+function scheduleItem(path, schedule) {
+  new cronJob(schedule, function(){
+    emitContent(path)
+  }, null, true, null);
+}
 
-  emitContent('/public/current/item_2.html')
-}, null, true, null);
+for (var i = 0; i < items.length; i++) {
+  scheduleItem(items[i].path, items[i].schedule);
+}
 
 io.sockets.on('connection', function (socket) {
   console.log('Client connected');
