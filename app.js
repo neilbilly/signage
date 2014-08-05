@@ -16,26 +16,26 @@ function handler(req, res) {
   })
 }
 
-function emitContent(file) {
-  console.log('Broadcasting to noticeboard');
+function emitContent(file, room) {
+  console.log('Broadcasting to ' + room);
   fs.readFile(__dirname + file, 'utf8', function (err, data) {
-      io.sockets.in('noticeboard').emit('content_push', {content: data});
+      io.sockets.in(room).emit('content_push', {content: data});
   });
 }
 
 var items = [];
-items.push({path:'/public/current/item_1.html',schedule:'0 * * * * *'});
-items.push({path:'/public/current/item_2.html',schedule:'30 * * * * *'});
+items.push({path:'/public/signage/item_1.html', schedule:'0 * * * * *', room:'noticeboard'});
+items.push({path:'/public/signage/item_2.html', schedule:'30 * * * * *', room:'noticeboard'});
 
 
-function scheduleItem(path, schedule) {
+function scheduleItem(path, schedule, room) {
   new cronJob(schedule, function(){
-    emitContent(path)
+    emitContent(path, room)
   }, null, true, null);
 }
 
 for (var i = 0; i < items.length; i++) {
-  scheduleItem(items[i].path, items[i].schedule);
+  scheduleItem(items[i].path, items[i].schedule, items[i].room);
 }
 
 io.sockets.on('connection', function (socket) {
