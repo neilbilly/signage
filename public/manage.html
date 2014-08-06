@@ -11,10 +11,10 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io.connect('http://localhost:4000');
-      var room = 'control_center';
+      var channel = 'control_center';
 
       socket.on('connect', function () {
-        socket.emit('room', room)
+        socket.emit('channel', channel)
       })
 
       socket.on('status', function (data) {

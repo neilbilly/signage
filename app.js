@@ -1,13 +1,11 @@
 var app = require('http').createServer(handler),
     io = require('socket.io').listen(app),
-    fs = require('fs');
+    fs = require('fs'),
     cronJob = require('cron').CronJob;
 
-var clientCount = 0;
-var clientCountForControlCenter = 0;
-var clientCountForNoticeboard = 0;
-
-app.listen(4000);
+var clientCount = 0,
+    clientCountForControlCenter = 0,
+    clientCountForNoticeboard = 0;
 
 function handler(req, res) {
   fs.readFile(__dirname + '/public' + req.url, function (err, data) {
@@ -16,35 +14,40 @@ function handler(req, res) {
   })
 }
 
-function emitContent(file, room) {
-  console.log('Broadcasting to ' + room);
-  fs.readFile(__dirname + file, 'utf8', function (err, data) {
-      io.sockets.in(room).emit('content_push', {content: data});
-  });
-}
-
-var items = [];
-items.push({path:'/public/signage/item_1.html', schedule:'0 * * * * *', room:'noticeboard'});
-items.push({path:'/public/signage/item_2.html', schedule:'30 * * * * *', room:'noticeboard'});
-
-
-function scheduleItem(path, schedule, room) {
+function scheduleItem(path, schedule, channel) {
   new cronJob(schedule, function(){
-    emitContent(path, room)
+    emitContent(path, channel)
   }, null, true, null);
 }
 
-for (var i = 0; i < items.length; i++) {
-  scheduleItem(items[i].path, items[i].schedule, items[i].room);
+function emitContent(file, channel) {
+  console.log('Broadcasting ' + file + ' to ' + channel + ' at ' + Date().toLocaleString());
+  fs.readFile(__dirname + file, 'utf8', function (err, data) {
+      io.sockets.in(channel).emit('content_push', {content: data});
+  });
 }
+
+function loadSchedule(scheduleFile) {
+  fs.readFile(scheduleFile, function (err, data) {
+    var schedule = JSON.parse(data);
+    for (item in schedule) {
+      if (schedule.hasOwnProperty(item)) {
+        scheduleItem(schedule[item].path, schedule[item].schedule, schedule[item].channel);
+      }
+    }
+  })
+}
+
+app.listen(4000);
+loadSchedule('schedule.json');
 
 io.sockets.on('connection', function (socket) {
   console.log('Client connected');
   clientCount++;
 
-  socket.on('room', function (room) {
-    console.log('Client joining ' + room);
-    socket.join(room)
+  socket.on('channel', function (channel) {
+    console.log('Client joining ' + channel);
+    socket.join(channel)
   })
 
   io.sockets.in('control_center').emit('status', {clientCount: clientCount});

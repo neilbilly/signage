@@ -1,0 +1,4 @@
+[
+    {"path":"/public/signage/item_1.html", "schedule":"0,30 * * * * *", "channel":"noticeboard"},
+    {"path":"/public/signage/item_2.html", "schedule":"15,45 * * * * *", "channel":"noticeboard"}
+]
