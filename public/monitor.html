@@ -4,22 +4,23 @@
     <title></title>
   </head>
   <body>
-    <div id="status">
+    <h2>Activity Log</h2>
+
+    <div id="log">
 
     </div>
     <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io.connect('http://localhost:4000');
-      var channel = 'control_center';
+      var channel = 'monitor';
 
       socket.on('connect', function () {
         socket.emit('channel', channel)
       })
 
-      socket.on('status', function (data) {
-        console.log(data);
-        $('#status').html(data.clientCount);
+      socket.on('log', function (data) {
+        $('#log').prepend( "<p>" + data.message + "</p>" )
       });
 
     </script>

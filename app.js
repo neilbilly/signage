@@ -14,6 +14,15 @@ function handler(req, res) {
   })
 }
 
+//logs messages to the console and emits to a monitor channel
+function log(message) {
+  const monitor_channel = 'monitor';
+  const log = 'log';
+
+  console.log(message);
+  io.sockets.in(monitor_channel).emit(log, {message: message});
+}
+
 function scheduleItem(path, schedule, channel) {
   new cronJob(schedule, function(){
     emitContent(path, channel)
@@ -21,8 +30,8 @@ function scheduleItem(path, schedule, channel) {
 }
 
 function emitContent(file, channel) {
-  console.log('Broadcasting ' + file + ' to ' + channel + ' at ' + Date().toLocaleString());
   fs.readFile(__dirname + file, 'utf8', function (err, data) {
+      log('Broadcasting ' + file + ' to the ' + channel + ' channel (' + Date().toLocaleString() + ')');
       io.sockets.in(channel).emit('content_push', {content: data});
   });
 }
@@ -42,19 +51,20 @@ app.listen(4000);
 loadSchedule('schedule.json');
 
 io.sockets.on('connection', function (socket) {
-  console.log('Client connected');
+  log('Client connected');
   clientCount++;
+  log('Total clients now connected is ' + clientCount);
 
   socket.on('channel', function (channel) {
-    console.log('Client joining ' + channel);
+    log('Client joining ' + channel);
     socket.join(channel)
   })
 
-  io.sockets.in('control_center').emit('status', {clientCount: clientCount});
+  io.sockets.in('monitor').emit('clients', {clientCount: clientCount});
 
   socket.on('disconnect', function () {
-    console.log('Client disconnected');
+    log('Client disconnected');
     clientCount--;
-    io.sockets.emit('status', {clientCount: clientCount});
+    log('Total clients now connected is ' + clientCount);
   });
 });
