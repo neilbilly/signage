@@ -1,4 +1,5 @@
 var app = require('http').createServer(handler),
+    url = require('url')
     io = require('socket.io').listen(app),
     fs = require('fs'),
     cronJob = require('cron').CronJob;
@@ -7,14 +8,17 @@ var clientCount = 0,
     clientCountForControlCenter = 0,
     clientCountForNoticeboard = 0;
 
+// Request handler. URL's are pasred in order to ignore querystrings as
+// these are only required at the client to feed to socket.io.
 function handler(req, res) {
-  fs.readFile(__dirname + '/public' + req.url, function (err, data) {
+  urlObj = url.parse(req.url);
+  fs.readFile(__dirname + '/public' + urlObj.pathname, function (err, data) {
     res.writeHead(200);
     res.end(data);
   })
 }
 
-//logs messages to the console and emits to a monitor channel
+// Logs messages to the console and emits to a monitor channel
 function log(message) {
   const monitor_channel = 'monitor';
   const log = 'log';

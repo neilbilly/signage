@@ -2,6 +2,12 @@
 <html>
   <head>
     <title></title>
+    <script charset="utf-8">
+      // Finds a specific id in the querystring
+      function getQueryVariable(key) {
+          return channel = unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(key).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
+      }
+    </script>
   </head>
   <body>
     <div id="content">
@@ -11,7 +17,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io.connect('http://localhost:4000');
-      var channel = 'noticeboard';
+      var channel = getQueryVariable('channel');
 
       socket.on('connect', function () {
         socket.emit('channel', channel)

@@ -11,3 +11,6 @@ The schedule manifest is held in the schedule.json file.
 
 ### Monitor Page
 System activity is displayed in real time on the /monitor.html page.
+
+### Multi-channel Support
+Channels are defined in the schedule.json file and are accessed via the signage.html page's querystring, e.g. /signage.html?channel=noticeboard will receive broadcasts to the noticeboard channel. 
