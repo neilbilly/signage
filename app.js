@@ -34,9 +34,9 @@ function scheduleItem(path, schedule, channel) {
 }
 
 function emitContent(file, channel) {
-  fs.readFile(__dirname + file, 'utf8', function (err, data) {
+  fs.readFile(__dirname + file, function (err, buf) {
       log('Broadcasting ' + file + ' to the ' + channel + ' channel (' + Date().toLocaleString() + ')');
-      io.sockets.in(channel).emit('content_push', {content: data});
+      io.sockets.in(channel).emit('content_push', { image: true, buffer: buf });
   });
 }
 

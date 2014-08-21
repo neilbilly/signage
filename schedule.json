@@ -1,6 +1,6 @@
 [
-    {"path":"/public/signage/item_1.html", "schedule":"0,30 * * * * *", "channel":"noticeboard"},
-    {"path":"/public/signage/item_2.html", "schedule":"15,45 * * * * *", "channel":"noticeboard"},
-    {"path":"/public/signage/item_3.html", "schedule":"15,45 * * * * *", "channel":"reception"},
-    {"path":"/public/signage/item_4.html", "schedule":"0,30 * * * * *", "channel":"reception"}
+    {"path":"/public/signage/item_1.png", "schedule":"0,30 * * * * *", "channel":"noticeboard"},
+    {"path":"/public/signage/item_2.png", "schedule":"15,45 * * * * *", "channel":"noticeboard"},
+    {"path":"/public/signage/item_3.png", "schedule":"15,45 * * * * *", "channel":"reception"},
+    {"path":"/public/signage/item_4.png", "schedule":"0,30 * * * * *", "channel":"reception"}
 ]
