@@ -21,7 +21,7 @@ function handler(req, res) {
 app.listen(4000);
 
 //Initate broadcasting
-scheduling.loadSchedule('schedule.json');
+scheduling.loadSchedule('./config/schedule.json');
 
 //Handle clients
 io.sockets.on('connection', function (socket) {
