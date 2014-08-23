@@ -3,7 +3,8 @@ var app = require('http').createServer(handler),
     io = require('socket.io').listen(app),
     fs = require('fs'),
     cronJob = require('cron').CronJob,
-    logging =  require('./logging.js')
+    logging =  require('./logging.js'),
+    scheduling = require('./scheduling.js')
 
 var clientCount = 0;
 
@@ -17,34 +18,12 @@ function handler(req, res) {
   })
 }
 
-function scheduleItem(path, schedule, channel) {
-  new cronJob(schedule, function(){
-    emitContent(path, channel)
-  }, null, true, null);
-}
-
-function emitContent(file, channel) {
-  fs.readFile(__dirname + file, function (err, buf) {
-      logging.log('Broadcasting ' + file + ' to the ' + channel + ' channel (' + Date().toLocaleString() + ')');
-      io.sockets.in(channel).emit('content_push', { image: true, buffer: buf });
-  });
-}
-
-// Iterate through schedule.json and call scheduling
-function loadSchedule(scheduleFile) {
-  fs.readFile(scheduleFile, function (err, data) {
-    var schedule = JSON.parse(data);
-    for (item in schedule) {
-      if (schedule.hasOwnProperty(item)) {
-        scheduleItem(schedule[item].path, schedule[item].schedule, schedule[item].channel);
-      }
-    }
-  })
-}
-
 app.listen(4000);
-loadSchedule('schedule.json');
 
+//Initate broadcasting
+scheduling.loadSchedule('schedule.json');
+
+//Handle clients
 io.sockets.on('connection', function (socket) {
   logging.log('Client connected');
   clientCount++;
