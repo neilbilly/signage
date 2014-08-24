@@ -4,9 +4,10 @@ var app = require('http').createServer(handler),
     fs = require('fs'),
     cronJob = require('cron').CronJob,
     logging =  require('./logging.js'),
-    scheduling = require('./scheduling.js')
+    schedule = require('./schedule.js')
 
 var clientCount = 0;
+const scheduleFile = './config/schedule.json';
 
 // Request handler. URL's are pasred in order to ignore querystrings as
 // these are only required at the client to feed to socket.io.
@@ -21,7 +22,11 @@ function handler(req, res) {
 app.listen(4000);
 
 //Initate broadcasting
-scheduling.loadSchedule('./config/schedule.json');
+schedule.load(scheduleFile);
+
+//monitor for schedule changes
+schedule.reloadOnChange(scheduleFile);
+
 
 //Handle clients
 io.sockets.on('connection', function (socket) {
