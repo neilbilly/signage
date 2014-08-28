@@ -26,6 +26,9 @@ For example:
 ]
 ```
 
+#### New Client Synchronization
+The last push to any channel is recorded and is immediately pushed to a new client on joining the channel.
+
 ### Schedule format
 The schedule uses an extended cron format provided by [node-cron](https://github.com/ncb000gt/node-cron). For example:
 ```

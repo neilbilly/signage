@@ -36,7 +36,9 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('channel', function (channel) {
     logging.log('Client joining ' + channel);
-    socket.join(channel)
+    socket.join(channel,function () {
+      schedule.clientSync(channel, socket.id)
+    })
   })
 
   io.sockets.in('monitor').emit('clients', {clientCount: clientCount});
