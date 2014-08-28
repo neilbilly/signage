@@ -83,7 +83,6 @@ function lastPush(path, channel) {
         lastPushes.push([path,channel]);
       }
     } else {
-      //console.log('adding ' + channel);
       lastPushes.push([path,channel]);
     }
   } catch (err) {
